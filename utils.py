@@ -1,6 +1,6 @@
 def read_initial_urls(path):
     with open(path, 'r') as urls_file:
-        initial_urls = [file for file in urls_file]
+        initial_urls = [file.replace("\n", "") for file in urls_file]
     
     return initial_urls
 
