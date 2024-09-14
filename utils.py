@@ -31,14 +31,13 @@ def filter_urls(urls: list, target_site: str) -> list:
         /
     """
     filtered_urls = []
-    file_endings = ['png', 'js', 'html', 'jpg', 'jpeg', 'gif', 'css', 'php', 'mp3']
+    file_endings = ['png', 'js', 'jpg', 'jpeg', 'gif', 'css', 'php', 'mp3']
     for url in urls:
         url_ending = url.split('.')[-1]
         if (url_ending not in file_endings) and (target_site in url):
             filtered_urls.append(url)
         
     return filtered_urls
-
 
 
 if __name__ == '__main__':
