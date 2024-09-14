@@ -2,34 +2,28 @@ from utils import read_initial_urls, filter_urls
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
 from urllib.error import URLError
+from lxml import html
+from scraper import Scraper
 import urllib
 import re
 import requests
 
-class Crawler:
-    def __init__(self, initial_urls: str): 
-        self.url_queue = read_initial_urls(initial_urls)
-        self.visited_urls = set()
-        
-    def _get_page_text(self, url:str) -> str:
+class YahooCrawler:
+    def __init__(self, n_urls, initial_urls: str, base_page: str): 
         """
-        Makes a get request to an URL and fetches the page text
+        Initialzes some Arguments
         
         Args:
-            url (str): The URL of the webpage
-            
-        Returns:
-            page_text (str): all the Text on the webpage
-            page_status_code (str): status code of the get request
-            
-        Raises: 
-            /
-        """
-        page_info = requests.get(url, timeout=2.50)
-        page_status_code = page_info.status_code
-        page_text = page_info.text
+            n_urls (str): Amount of URLs that should be parsed
+            initial_urls (str): Path to the inital_urls.txt file
+            base_page (str): URL on which the crawler should stay
 
-        return page_text, page_status_code
+        """
+        self.url_queue = read_initial_urls(initial_urls)
+        self.visited_urls = set()
+        self.scraper = Scraper()
+        self.base_page = base_page
+        self.n_urls = n_urls
     
     def _check_allowance(self, url: str) -> bool:
         """
@@ -72,7 +66,7 @@ class Crawler:
         robot_txt_url = base_url + '/' + "robots.txt"
         return robot_txt_url
 
-    def _parse_page_text(self, page_text: str) -> list:
+    def _get_page_urls(self, url: str) -> list:
         """
         Retrieves for a given String all the occurences of URLs
         
@@ -85,8 +79,10 @@ class Crawler:
         Raises: 
             /
         """
+        page_info = requests.get(url, timeout=2.50)
+        page_text = page_info.text
         urls = re.findall(r'href=["\']?(https?://[^\s"\'<>]+)', page_text)
-        urls = filter_urls(urls, "https://finance.yahoo.com/")
+        urls = filter_urls(urls, self.base_page)
         return urls
 
     def crawl_urls(self) -> None:
@@ -100,8 +96,11 @@ class Crawler:
         Raises: 
             URLError, if the URL is not a real URL
         """
-
+        i = 1
         for url in self.url_queue:
+            print(f"Currently Scraping URL Nr.{i}")
+            i += 1
+            
             try:
                 self.url_queue.remove(url)
             except URLError:
@@ -116,12 +115,16 @@ class Crawler:
                 continue
 
             self.visited_urls.add(url)
-            page_text, _ = self._get_page_text(url)
-            crawled_urls = self._parse_page_text(page_text)
+            crawled_urls = self._get_page_urls(url)
+            self.scraper.scrape(url)
             self.url_queue.extend(crawled_urls)
 
+            if i > self.n_urls:
+                break
+
+
 if __name__ == '__main__':
-    crawler = Crawler("initial_urls.txt")
+    crawler = YahooCrawler(n_urls=50, "initial_urls.txt", "https://finance.yahoo.com/")
     crawler.crawl_urls()
     
 
