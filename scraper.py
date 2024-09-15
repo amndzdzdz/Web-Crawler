@@ -32,6 +32,7 @@ class Scraper():
         driver.get(url)
         time.sleep(3)
 
+        #Check if cookie pop up needs to be accepted
         try:
             driver.find_element(By.NAME, "agree").click()
         except:
@@ -99,7 +100,10 @@ class Scraper():
         client = MongoClient()
         yahoo_finance_db = client.YahooFinanceDB
         articles_collection = yahoo_finance_db.Articles
-        articles_collection.insert_one(entry).inserted_id
+
+        #Check if the articles is already in the database
+        if articles_collection.find_one({"title": entry["title"]}) == None:
+            articles_collection.insert_one(entry).inserted_id
 
     def __initialize_driver(self) -> webdriver:
         """
@@ -115,11 +119,14 @@ class Scraper():
             /
         """
         options = Options()
-        options.add_argument("--disable-search-engine-choice-screen")
-        options.add_argument("--no-sandbox")
-        options.add_argument("disable-infobars")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--disable-dev-shm-usage")
+        try:
+            options.add_argument("--disable-search-engine-choice-screen")
+            options.add_argument("--no-sandbox")
+            options.add_argument("disable-infobars")
+            options.add_argument("--disable-extensions")
+            options.add_argument("--disable-dev-shm-usage")
+        except:
+            print("An Unknown error has occured")
         driver = webdriver.Chrome(options=options)
 
         return driver

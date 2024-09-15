@@ -2,6 +2,13 @@
 
 This Python-based web crawler is designed to crawl news websites, scrape articles, and store them in a MongoDB database. The crawler starts with a set of initial URLs, follows all links on each webpage, and continues crawling using a queue. It also checks the `robots.txt` file for each site to ensure compliance with the site's crawl policies. For websites with dynamically loaded content, the crawler uses **Selenium** to automate a browser for rendering the page before scraping.
 
+## Crawling Results
+
+The crawler was run for a few hours, during which it successfully crawled around **2200 unique articles** from the Yahoo Finance news website. The articles were stored in a MongoDB database, with all relevant metadata for easy retrieval and querying.
+
+Example reults:
+![Example results](example_results.PNG)
+
 ## Features
 
 ### 1. URL Crawling
@@ -37,7 +44,7 @@ This Python-based web crawler is designed to crawl news websites, scrape article
 
 1. Clone this repository:
     ```bash
-    git clone https://github.com/yourusername/web-crawler.git
+    git clone https://github.com/amndzdzdz/Web-Crawler.git
     ```
 
 2. Install the required Python libraries:
@@ -49,19 +56,15 @@ This Python-based web crawler is designed to crawl news websites, scrape article
 
 4. Configure MongoDB connection in the crawler script:
     ```python
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
-    db = client['your_database']
-    collection = db['your_collection']
+    client = MongoClient()
+    your_database_name = client.your_database_name
+    your_collections_name = your_database_name.your_collections_name
     ```
 
 5. Run the crawler:
     ```bash
     python crawler.py
     ```
-
-## Future Improvements
-
-- **Content Deduplication**: A hashing mechanism could be implemented to prevent scraping duplicate articles.
 
 ## Contributing
 Feel free to submit pull requests or open issues for improvements, bug fixes, or feature requests!

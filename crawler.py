@@ -13,6 +13,7 @@ import urllib
 import re
 import requests
 import time
+PYDEVD_WARN_SLOW_RESOLVE_TIMEOUT = 1
 
 class YahooCrawler:
     def __init__(self, n_urls: int, initial_urls: str, base_page: str): 
@@ -29,7 +30,7 @@ class YahooCrawler:
         self.scraper = Scraper()
         self.base_page = base_page
         self.n_urls = n_urls
-    
+
     def _check_allowance(self, url: str) -> bool:
         """
         Checks for a given webpage-url whether its crawlable. The function checks the robots.txt of the
