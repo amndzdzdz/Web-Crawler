@@ -1,3 +1,8 @@
+"""
+Author:
+    Amin Dziri
+"""
+
 def read_initial_urls(path:str) -> list:
     """
     Reads the initial URLs from the initial_urls.txt file
@@ -38,9 +43,3 @@ def filter_urls(urls: list, target_site: str) -> list:
             filtered_urls.append(url)
         
     return filtered_urls
-
-
-if __name__ == '__main__':
-    urls = ["https://s.yimg.com/uc/finance/webcore","https://www.yahoo.com/news/politics/", "https://s.yimg.com/uc/finance/webcore/js/_staticFinProtobuf.4b1559b8e4645fd93a12.js"]
-
-    filter_urls(urls, "https://www.yahoo.com")

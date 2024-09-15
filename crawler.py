@@ -1,3 +1,8 @@
+"""
+Author:
+    Amin Dziri
+"""
+
 from utils import read_initial_urls, filter_urls
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
@@ -7,17 +12,17 @@ from scraper import Scraper
 import urllib
 import re
 import requests
+import time
 
 class YahooCrawler:
-    def __init__(self, n_urls, initial_urls: str, base_page: str): 
+    def __init__(self, n_urls: int, initial_urls: str, base_page: str): 
         """
         Initialzes some Arguments
         
         Args:
-            n_urls (str): Amount of URLs that should be parsed
+            n_urls (int): Amount of URLs that should be parsed
             initial_urls (str): Path to the inital_urls.txt file
             base_page (str): URL on which the crawler should stay
-
         """
         self.url_queue = read_initial_urls(initial_urls)
         self.visited_urls = set()
@@ -68,10 +73,10 @@ class YahooCrawler:
 
     def _get_page_urls(self, url: str) -> list:
         """
-        Retrieves for a given String all the occurences of URLs
+        Makes a get Request to the given URL Argument, parses the html and extracts all the URLs
         
         Args:
-            page_text (str): A String with all the text of a webpage
+            url (str): An URL to a webpage
             
         Returns:
             urls (list): A List with all the URLs within the page_text 
@@ -97,8 +102,9 @@ class YahooCrawler:
             URLError, if the URL is not a real URL
         """
         i = 1
+        start_time = time.time()
         for url in self.url_queue:
-            print(f"Currently Scraping URL Nr.{i}")
+            print(f"Currently Scraping URL Nr.{i}, time: {(time.time() - start_time) / 3600} h")
             i += 1
             
             try:
@@ -116,15 +122,14 @@ class YahooCrawler:
 
             self.visited_urls.add(url)
             crawled_urls = self._get_page_urls(url)
-            self.scraper.scrape(url)
             self.url_queue.extend(crawled_urls)
-
+            self.scraper.scrape(url)
+            
             if i > self.n_urls:
                 break
 
-
 if __name__ == '__main__':
-    crawler = YahooCrawler(n_urls=50, "initial_urls.txt", "https://finance.yahoo.com/")
+    crawler = YahooCrawler(n_urls=50, initial_urls="initial_urls.txt", base_page="https://finance.yahoo.com/")
     crawler.crawl_urls()
     
 
