@@ -6,7 +6,6 @@ This Python-based web crawler is designed to crawl news websites, scrape article
 
 The crawler was run for a few hours, during which it successfully crawled around **2200 unique articles** from the Yahoo Finance news website. The articles were stored in a MongoDB database, with all relevant metadata for easy retrieval and querying.
 
-Example reults:
 ![Example results](example_results.PNG)
 
 ## Features
